@@ -1,3 +1,8 @@
 .claude/
 __pycache__/
 *.pyc
+node_modules/
+.wrangler/
+.dev.vars
+.wrangler-test-key.pem
+.wrangler-dev.log

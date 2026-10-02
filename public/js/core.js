@@ -42,6 +42,7 @@
     view: (() => { try { return localStorage.getItem(CACHE_VER + "view") === "stats" ? "stats" : "xp"; } catch { return "xp"; } })(),
     heroMeta: null, rank: null, mates: null, enemies: null,
     profiles: new Map(), matches: new Map(),
+    server: null, me: null, ladderShown: 100, // server = /api/health result when the Worker is present
   };
 
   // ---------------------------------------------------------------- utils ----
@@ -115,7 +116,7 @@
     const acct = Number(parts[0]) || null;
     const page = parts[1] || "overview";
     const arg = parts[2] ? Number(parts[2]) : null;
-    return { acct, page: ["overview", "heroes", "hero", "matches", "match", "codex", "compare"].includes(page) ? page : "overview", arg };
+    return { acct, page: ["overview", "heroes", "hero", "matches", "match", "codex", "compare", "ladder"].includes(page) ? page : "overview", arg };
   }
 
   // Records of counted games, newest first, optionally for one hero.

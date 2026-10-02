@@ -1,7 +1,7 @@
 // Prints the Core Stats aggregation for an account.  node tools/stats_report.js <SteamID3>
-const S = require("../js/scoring.js"), D = require("../js/data.js"), T = require("../js/stats.js");
+const S = require("../public/js/scoring.js"), D = require("../public/js/data.js"), T = require("../public/js/stats.js");
 const fs = require("fs"), path = require("path");
-const src = fs.readFileSync(path.join(__dirname, "..", "data", "baselines.js"), "utf8");
+const src = fs.readFileSync(path.join(__dirname, "..", "public", "data", "baselines.js"), "utf8");
 const B = JSON.parse(src.slice(src.indexOf("=") + 1).trim().replace(/;$/, ""));
 const id = Number(process.argv[2]);
 if (!id) { console.error("usage: node tools/stats_report.js <SteamID3>"); process.exit(1); }

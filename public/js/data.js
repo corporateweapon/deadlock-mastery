@@ -35,7 +35,8 @@
   // emptyOn404: the metadata endpoint answers 404 when none of the asked-for matches exist yet.
   async function getJSON(path, params, emptyOn404) {
     const qs = params ? "?" + new URLSearchParams(params).toString() : "";
-    const res = await fetch(API + path + qs);
+    // Server-side callers (the Cloudflare Worker) set DM_FETCH_HEADERS, e.g. a User-Agent.
+    const res = await fetch(API + path + qs, root.DM_FETCH_HEADERS ? { headers: root.DM_FETCH_HEADERS } : undefined);
     if (res.status === 404 && emptyOn404) return [];
     if (res.status === 429) throw new Error("deadlock-api rate limit hit - wait a minute and refresh.");
     if (!res.ok) throw new Error(`deadlock-api ${path} -> HTTP ${res.status}`);
@@ -192,7 +193,7 @@
     return Object.assign({}, existing, incoming);
   }
 
-  const api = { API, parseSteamInput, from64, to64, fetchHistory, fetchProfile, searchProfiles,
+  const api = { API, getJSON, parseSteamInput, from64, to64, fetchHistory, fetchProfile, searchProfiles,
     fetchAllMetadata, fetchMetadataFor, fetchHeroes, fetchMatch, fetchProfiles, fetchMates, fetchEnemies,
     fetchRank, fetchHeroMeta, fromHistory, fromMetadata, merge };
   if (typeof module !== "undefined" && module.exports) module.exports = api;

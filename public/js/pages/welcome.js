@@ -32,6 +32,10 @@
       <div class="eyebrow">Meta progression for Deadlock</div>
       <h1 class="wl-title"><span>Deadlock</span> <em>Mastery</em></h1>
       <p class="flavor">“The city keeps a ledger on everyone. Here's yours.”</p>
+      ${state.me ? `<a class="btn-gold wl-steam" href="#${state.me.accountId}">Continue to my dossier</a><div class="wl-or">or look someone else up</div>`
+        : state.server && state.server.auth ? `<a class="btn-gold wl-steam" href="/auth/steam">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 10h9M13 7l3 3-3 3"/><path d="M11 4H4v12h7"/></svg>Sign in with Steam</a>
+          <div class="wl-or">or look anyone up without signing in</div>` : ""}
       <form class="wl-find" data-welcome-find autocomplete="off">
         <input type="text" name="q" placeholder="Steam friend code, profile link or player name" aria-label="Your Steam account" autofocus>
         <button class="btn-gold" type="submit">Open my dossier</button>
@@ -44,7 +48,7 @@
           <li><b>Profile link</b>: paste your <i>steamcommunity.com/profiles/7656…</i> link, or just the 17-digit SteamID64.</li>
           <li><b>Name</b>: type your Steam name and pick yourself from the list.</li>
         </ul>
-        <p class="fine">Match data comes from deadlock-api.com and only covers public match history. Nothing you type is stored anywhere except this browser.</p>
+        <p class="fine">Match data comes from deadlock-api.com and only covers public match history. Signing in uses Steam's own login page: this site never sees your password, only your public SteamID.</p>
       </details>
       ${seen.length ? `<div class="wl-recent">
         <h3 class="h-small">Recently viewed <span class="h-note">on this browser</span></h3>

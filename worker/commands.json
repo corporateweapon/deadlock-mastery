@@ -1,0 +1,50 @@
+[
+  {
+    "name": "dossier",
+    "description": "A player's Deadlock Mastery dossier: account level, signature hero, win rate.",
+    "integration_types": [0, 1], "contexts": [0, 1, 2],
+    "options": [
+      { "type": 3, "name": "player", "description": "Steam friend code, profile link or name (defaults to your linked account)", "required": false }
+    ]
+  },
+  {
+    "name": "mastery",
+    "description": "Hero mastery rank, points and record for one hero.",
+    "integration_types": [0, 1], "contexts": [0, 1, 2],
+    "options": [
+      { "type": 3, "name": "hero", "description": "Hero name", "required": true, "autocomplete": true },
+      { "type": 3, "name": "player", "description": "Steam friend code, profile link or name (defaults to your linked account)", "required": false }
+    ]
+  },
+  {
+    "name": "compare",
+    "description": "Two dossiers head to head.",
+    "integration_types": [0, 1], "contexts": [0, 1, 2],
+    "options": [
+      { "type": 3, "name": "player", "description": "Who to compare against", "required": true },
+      { "type": 3, "name": "other", "description": "Second player (defaults to your linked account)", "required": false }
+    ]
+  },
+  {
+    "name": "ladder",
+    "description": "North America ladder top 10, plus where a player stands.",
+    "integration_types": [0, 1], "contexts": [0, 1, 2],
+    "options": [
+      { "type": 3, "name": "hero", "description": "Hero ladder (leave empty for the overall ranked ladder)", "required": false, "autocomplete": true },
+      { "type": 3, "name": "player", "description": "Whose standing to show (defaults to your linked account)", "required": false }
+    ]
+  },
+  {
+    "name": "link",
+    "description": "Link your Discord to a Deadlock account so commands default to you.",
+    "integration_types": [0, 1], "contexts": [0, 1, 2],
+    "options": [
+      { "type": 3, "name": "player", "description": "Your Steam friend code, profile link or name", "required": true }
+    ]
+  },
+  {
+    "name": "unlink",
+    "description": "Forget your linked Deadlock account.",
+    "integration_types": [0, 1], "contexts": [0, 1, 2]
+  }
+]

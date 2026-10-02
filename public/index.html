@@ -41,6 +41,7 @@
       <a data-nav="overview" href="#">Overview</a>
       <a data-nav="heroes" href="#">Heroes</a>
       <a data-nav="matches" href="#">Ledger</a>
+      <a data-nav="ladder" href="#">Ladders</a>
       <a data-nav="compare" href="#">Compare</a>
       <a data-nav="codex" href="#">Codex</a>
     </nav>
@@ -54,6 +55,7 @@
       <button type="submit" class="btn-gold">Load</button>
       <div id="search-results" class="search-results" hidden></div>
     </form>
+    <div id="me-slot" class="me-slot"></div>
     <button id="share" class="btn-ghost icon-btn" type="button" title="Copy a link to this page" aria-label="Copy link to this page">
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 12a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M12 8a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1-1"/></svg>
     </button>
@@ -81,7 +83,7 @@
 
   <footer class="foot">
     <svg viewBox="0 0 120 12" aria-hidden="true"><path d="M0 6h48M72 6h48" /><path d="M60 0 66 6 60 12 54 6Z"/></svg>
-    <p>Match data from <a href="https://deadlock-api.com" target="_blank" rel="noopener">deadlock-api.com</a>. A fan project, not affiliated with Valve. <a href="#start">Look up another player</a></p>
+    <p>Match data from <a href="https://deadlock-api.com" target="_blank" rel="noopener">deadlock-api.com</a>. A fan project, not affiliated with Valve. <a href="#start">Look up another player</a><span id="discord-link"></span></p>
   </footer>
 
   <script src="data/baselines.js"></script>
@@ -101,6 +103,7 @@
   <script src="js/pages/codex.js"></script>
   <script src="js/pages/compare.js"></script>
   <script src="js/pages/welcome.js"></script>
+  <script src="js/pages/ladder.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

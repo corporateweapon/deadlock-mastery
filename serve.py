@@ -4,7 +4,7 @@
 """
 import functools, http.server, pathlib, sys, webbrowser
 
-ROOT = pathlib.Path(__file__).resolve().parent
+ROOT = pathlib.Path(__file__).resolve().parent / "public"
 PORT = next((int(a) for a in sys.argv[1:] if a.isdigit()), 8787)
 
 

@@ -2,10 +2,10 @@
 // knobs in js/scoring.js produce.  node tools/balance_report.js <SteamID3>
 const fs = require("fs");
 const path = require("path");
-const S = require("../js/scoring.js");
-const D = require("../js/data.js");
+const S = require("../public/js/scoring.js");
+const D = require("../public/js/data.js");
 
-const src = fs.readFileSync(path.join(__dirname, "..", "data", "baselines.js"), "utf8");
+const src = fs.readFileSync(path.join(__dirname, "..", "public", "data", "baselines.js"), "utf8");
 const baselines = JSON.parse(src.slice(src.indexOf("=") + 1).trim().replace(/;$/, ""));
 const accountId = Number(process.argv[2]);
 if (!accountId) { console.error("usage: node tools/balance_report.js <SteamID3>"); process.exit(1); }

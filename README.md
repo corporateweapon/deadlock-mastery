@@ -14,13 +14,25 @@ browser, so there's no server and nothing to keep running.
 
 ## Hosting
 
-GitHub Pages serves the `main` branch as-is (no build step). Push to `main` and the live site
-updates within a minute or two.
+The full site runs as a **Cloudflare Worker** (`worker/`) that serves `public/` and adds:
+
+- **Share links with preview cards**: `/p/<id>`, `/p/<id>/hero/<heroId>`, `/p/<id>/compare/<other>`
+  unfurl in Discord with a generated 1200×630 card (`/og/...png`) and open the matching page.
+- **Sign in with Steam** (OpenID; the site only ever learns your public SteamID).
+- **Discord bot** over HTTP interactions: `/dossier`, `/mastery`, `/compare`, `/ladder`, `/link`, `/unlink`.
+- **Ladder service**: Valve's official North America leaderboards (overall + per hero, with rank
+  badges), and your exact position among every player for six metrics, found with tiny one-row
+  scoreboard requests and cached.
+- **Cloudflare Web Analytics** injected when a beacon token is set (cookie-free).
+
+Setup and deployment: see **DEPLOY.md**. GitHub Pages still publishes `public/` on every push as a
+static fallback; the server-only extras switch themselves off there.
 
 ## Run
 
 ```
-"Launch Deadlock Mastery.bat"   # double-click; or: python serve.py [port] -> http://127.0.0.1:8787/
+"Launch Deadlock Mastery.bat"   # static site only: python serve.py [port] -> http://127.0.0.1:8787/
+npm install && npm run dev      # full site with the Worker features -> http://127.0.0.1:8787/
 ```
 
 Load an account with a SteamID64, `[U:1:…]`, `STEAM_0:…`, a `/profiles/` link, or a name
@@ -49,17 +61,25 @@ Rank-ups trigger a full-screen ceremony on the next refresh (preview with `?cere
 
 | Path | What |
 |---|---|
-| `js/scoring.js` | **All balance knobs** + pure scoring/progression functions (browser + Node) |
-| `js/data.js` | deadlock-api calls, Steam ID parsing, match record normalization |
-| `js/stats.js` | Core Stats aggregation (totals, averages, per-minute, bests) |
-| `js/core.js` | Shared state, formatting helpers, asset lookups, routes (`window.DM`) |
-| `js/components.js` | Crests, medallion, radar, ladders, seals, item icons, tables |
-| `js/charts.js` | SVG line charts with hover read-outs, bars, columns, calendar, donut |
-| `js/pages/*.js` | One file per page |
-| `js/app.js` | Sync, routing, interactions, ceremony |
-| `js/voicelines.js` | One voice line per hero, verbatim from deadlock.wiki |
-| `data/baselines.js` | Frozen per-hero global stat averages (`tools/build_baselines.py`) |
-| `data/assets.js` | Item, ability, rank and accolade names and icons (`tools/build_assets.py`; the raw item list is ~6 MB, this is 100 KB) |
+| `public/js/scoring.js` | **All balance knobs** + pure scoring/progression functions (browser + Node) |
+| `public/js/data.js` | deadlock-api calls, Steam ID parsing, match record normalization |
+| `public/js/stats.js` | Core Stats aggregation (totals, averages, per-minute, bests) |
+| `public/js/core.js` | Shared state, formatting helpers, asset lookups, routes (`window.DM`) |
+| `public/js/components.js` | Crests, medallion, radar, ladders, seals, item icons, tables |
+| `public/js/charts.js` | SVG line charts with hover read-outs, bars, columns, calendar, donut |
+| `public/js/pages/*.js` | One file per page |
+| `public/js/app.js` | Sync, routing, interactions, ceremony |
+| `public/js/voicelines.js` | One voice line per hero, verbatim from deadlock.wiki |
+| `public/data/baselines.js` | Frozen per-hero global stat averages (`tools/build_baselines.py`) |
+| `public/data/assets.js` | Item, ability, rank and accolade names and icons (`tools/build_assets.py`; the raw item list is ~6 MB, this is 100 KB) |
+| `public/js/pages/ladder.js` | Ladders page + the hero-page ladder strip |
+| `worker/index.js` | Worker routes: share pages, card images, API, auth, Discord |
+| `worker/core.js` | Server-side summary (same scoring code as the site), caching, player lookup |
+| `worker/ladder.js` | Official leaderboards + scoreboard position search |
+| `worker/og.js` | Share-card images (satori/resvg via `@cf-wasm/og`) |
+| `worker/auth.js` | Steam OpenID sign-in, signed session cookie |
+| `worker/discord.js`, `worker/commands.json` | Discord bot handlers and slash-command definitions |
+| `tools/discord_register.js`, `tools/test_bot.mjs` | Register slash commands; run bot commands offline against real data |
 | `tools/balance_report.js`, `tools/stats_report.js` | Print what the scoring and stats produce for a real account |
 
 ## Data

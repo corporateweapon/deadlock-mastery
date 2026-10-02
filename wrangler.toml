@@ -1,0 +1,21 @@
+# Deadlock Mastery on Cloudflare Workers: static site + share cards, Steam sign-in, Discord bot, ladders.
+# See DEPLOY.md for the one-time setup (KV namespace, secrets, Discord app).
+name = "deadlock-mastery"
+main = "worker/index.js"
+compatibility_date = "2026-09-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+# The worker handles these paths before static files are considered.
+run_worker_first = ["/", "/index.html", "/p/*", "/og/*", "/api/*", "/auth/*", "/discord/*"]
+
+[[kv_namespaces]]
+binding = "KV"
+id = "replace-with-your-kv-namespace-id"   # npx wrangler kv namespace create KV
+
+[vars]
+SITE_URL = ""         # e.g. "https://deadlockmastery.com" once your domain is live
+DISCORD_APP_ID = ""   # Discord application id (public)
+CF_BEACON_TOKEN = ""  # Cloudflare Web Analytics token (public)
+# Secrets (never in this file): SESSION_SECRET, DISCORD_PUBLIC_KEY, STEAM_API_KEY (optional), DEADLOCK_API_KEY (optional)

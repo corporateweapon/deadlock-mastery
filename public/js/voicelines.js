@@ -1,7 +1,7 @@
 // One iconic voice line per hero, shown under the name on the hero profile.
 // Every line is verbatim from the hero's Voice_lines page on the Deadlock Wiki
 // (https://deadlock.wiki/<Hero>/Voice_lines), checked 2026-10-01. Keyed by hero name.
-window.DM_VOICE = {
+globalThis.DM_VOICE = {
   "Abrams": "I'm too stubborn to die.",
   "Apollo": "I will honor my family's name.",
   "Bebop": "A little trouble never hurt anyone!",

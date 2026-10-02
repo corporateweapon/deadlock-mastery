@@ -231,7 +231,7 @@
     if (location.hash === "#start") return showWelcome();
     let last = null;
     try { last = Number(localStorage.getItem(CACHE_VER + "last")) || null; } catch { /* ignore */ }
-    const acct = r.acct || state.accountId || last;
+    const acct = r.acct || state.accountId || (state.me && state.me.accountId) || last;
     if (!acct) return showWelcome();
     const pageChanged = r.page !== state.route.page || r.arg !== state.route.arg;
     state.route = { page: r.page, arg: r.arg };
@@ -247,6 +247,7 @@
     for (const a of document.querySelectorAll("[data-nav]")) {
       const p = a.dataset.nav;
       a.classList.toggle("active", p === page || (p === "heroes" && page === "hero") || (p === "matches" && page === "match"));
+      if (p === "ladder") a.setAttribute("href", DM.href.page("ladder"));
     }
     // Hero and match pages tint the whole site in the hero's colour.
     let rgb = "217,181,106";
@@ -262,9 +263,11 @@
     fn(el, arg);
     if (state.animate) { runCountUps(el); setTimeout(() => { state.animate = false; }, 50); }
     if (scrollTop) window.scrollTo({ top: 0, behavior: "auto" });
-    const titles = { overview: "", heroes: "Heroes · ", matches: "Ledger · ", codex: "Codex · ", compare: "Compare · ",
+    const titles = { overview: "", heroes: "Heroes · ", matches: "Ledger · ", codex: "Codex · ", compare: "Compare · ", ladder: "Ladders · ",
       hero: arg ? `${heroMeta(arg).name} · ` : "", match: arg ? `Match ${arg} · ` : "" };
     document.title = `${titles[page] || ""}${state.profile ? state.profile.personaname + " · " : ""}Deadlock Mastery`;
+    const si = document.querySelector(".me-slot .signin");
+    if (si) si.setAttribute("href", `/auth/steam?r=${encodeURIComponent(location.hash || "")}`);
   }
 
   // Mastery XP <-> Core Stats, everywhere at once.
@@ -386,8 +389,8 @@
     $("#lookup").addEventListener("submit", (e) => { e.preventDefault(); handleLookup($("#lookup-input").value); });
     $("#refresh").addEventListener("click", () => state.accountId && openAccount(state.accountId, { force: true }));
     $("#share").addEventListener("click", async () => {
-      const url = location.origin + location.pathname + location.hash;
-      try { await navigator.clipboard.writeText(url); status("Link copied. Anyone with it lands on this exact page.", "ok"); }
+      const url = shareUrl();
+      try { await navigator.clipboard.writeText(url); status(state.server ? "Link copied. It shows a preview card in Discord and opens this exact page." : "Link copied. Anyone with it lands on this exact page.", "ok"); }
       catch { status(url, "ok"); }
     });
 
@@ -408,6 +411,7 @@
       };
       if (set("sort", "sort") || set("role", "role") || set("filter", "filter", true) || set("form", "formTab") || set("race", "raceKey")) return;
       if (t.closest("[data-more]")) { state.shown += PAGE * 2; renderPage(false); return; }
+      if (t.closest("[data-ladder-more]")) { state.ladderShown += 200; renderPage(false); return; }
       const hl = t.closest("[data-hero-ledger]");
       if (hl) { state.heroFilter = Number(hl.dataset.heroLedger); state.filter = "all"; state.shown = PAGE; return; }
       // Whole ledger rows are clickable; real links inside them win.
@@ -427,8 +431,55 @@
     wireTilt();
   }
 
+  // Is the Cloudflare Worker behind us? (Absent on GitHub Pages: extras stay hidden.)
+  async function probeServer() {
+    try {
+      const ctl = new AbortController();
+      const timer = setTimeout(() => ctl.abort(), 2500);
+      const r = await fetch("/api/health", { signal: ctl.signal });
+      clearTimeout(timer);
+      const j = r.ok && (r.headers.get("Content-Type") || "").includes("json") ? await r.json() : null;
+      state.server = j && j.ok ? j : null;
+    } catch { state.server = null; }
+    if (state.server && state.server.auth) {
+      try { const me = await (await fetch("/api/me", { cache: "no-store" })).json(); state.me = me.accountId ? me : null; } catch { /* signed out */ }
+    }
+    paintMe();
+  }
+
+  // Header slot: "Sign in with Steam", or the signed-in player's chip.
+  async function paintMe() {
+    const slot = $("#me-slot");
+    if (!slot) return;
+    const foot = $("#discord-link");
+    if (foot) foot.innerHTML = state.server && state.server.discord ? ` · <a href="${esc(state.server.discord)}" target="_blank" rel="noopener">Add the Discord bot</a>` : "";
+    if (!state.server || !state.server.auth) { slot.innerHTML = ""; return; }
+    if (!state.me) {
+      slot.innerHTML = `<a class="btn-ghost signin" href="/auth/steam?r=${encodeURIComponent(location.hash || "")}" title="Sign in through Steam">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 10h9M13 7l3 3-3 3"/><path d="M11 4H4v12h7"/></svg><span>Sign in with Steam</span></a>`;
+      return;
+    }
+    const id = state.me.accountId;
+    let p = state.profiles.get(id);
+    if (!p) { try { p = await D.fetchProfile(id); if (p) state.profiles.set(id, p); } catch { /* ok */ } }
+    slot.innerHTML = `<a class="me-chip" href="#${id}" title="Your dossier">${p && p.avatarmedium ? `<img src="${esc(p.avatarmedium)}" alt="">` : ""}<span>${esc((p && p.personaname) || "My dossier")}</span></a>
+      <a class="me-out" href="/auth/logout" title="Sign out">Sign out</a>`;
+  }
+
+  // Shareable link for the current page: rich-preview /p/ URLs when the server exists.
+  function shareUrl() {
+    const r = DM.parseHash(location.hash);
+    if (!state.server || !r.acct) return location.origin + location.pathname + location.hash;
+    const base = state.server.site || location.origin;
+    const tail = ["hero", "compare", "match"].includes(r.page) && r.arg ? `/${r.page}/${r.arg}` : "";
+    return `${base}/p/${r.acct}${tail}`;
+  }
+
   async function init() {
     wire();
+    await probeServer();
+    const signin = new URLSearchParams(location.search).get("signin");
+    if (signin) setTimeout(() => status(signin === "cancelled" ? "Steam sign-in was cancelled." : "Steam sign-in didn't complete. Please try again.", "warn"), 0);
     for (const b of document.querySelectorAll("button[data-view]")) b.setAttribute("aria-pressed", String(b.dataset.view === state.view));
     status("Loading heroes…");
     await loadHeroes();

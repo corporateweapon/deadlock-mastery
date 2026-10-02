@@ -16,6 +16,7 @@
 
     el.innerHTML = `<article class="hero-page t-${tier(m.level)}" style="--hero-rgb:${meta.rgb}">
       ${banner(meta, h, hs, m)}
+      <section class="panel hero-standing" id="hero-standing"></section>
       <section class="panel hp-kit">
         ${C.head("The Kit", `Abilities of ${esc(meta.name)}`)}
         ${C.abilityTiles(kit(id))}
@@ -46,6 +47,7 @@
         <section class="panel hp-lore">${lore(meta)}</section>
       </div>`}
     </article>`;
+    DM.heroStanding(document.getElementById("hero-standing"), id);
   }
 
   function banner(meta, h, hs, m) {
