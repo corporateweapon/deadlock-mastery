@@ -23,7 +23,7 @@ id = "a4c40e3903c74db281bc015ef8a97f9c"   # npx wrangler kv namespace create KV
 [vars]
 SITE_URL = "https://deadledger.net"
 DISCORD_APP_ID = ""   # Discord application id (public)
-CF_BEACON_TOKEN = ""  # Cloudflare Web Analytics token (public)
+CF_BEACON_TOKEN = "9501fcee116943049a2841dd86763f3d"  # Cloudflare Web Analytics token (public)
 # Secrets (never in this file): SESSION_SECRET, DISCORD_PUBLIC_KEY, STEAM_API_KEY (optional), DEADLOCK_API_KEY (optional)
 
 # Per-visitor request limits (Cloudflare's built-in rate limiter; counted per location, free).

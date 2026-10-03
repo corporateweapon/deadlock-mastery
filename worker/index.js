@@ -94,7 +94,7 @@ async function withAnalytics(request, env) {
   const res = await env.ASSETS.fetch(request);
   if (!env.CF_BEACON_TOKEN || !(res.headers.get("Content-Type") || "").includes("text/html")) return res;
   return new HTMLRewriter().on("body", { element(el) {
-    el.append(`<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"${esc(env.CF_BEACON_TOKEN)}"}'></script>`, { html: true });
+    el.append(`<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"${esc(env.CF_BEACON_TOKEN)}"}'></script>`, { html: true });
   } }).transform(res);
 }
 
