@@ -45,7 +45,7 @@ export function dossierCard(s) {
   return frame(rgb, "78% 40%",
     th ? portrait(th.gloat || th.card, rgb, TIERS[top.level]) : null,
     h("div", { flexDirection: "column", position: "absolute", left: 70, top: 52, width: 640 },
-      caps("Deadlock Mastery · Dossier", 20),
+      caps("Dead Ledger · Dossier", 20),
       h("div", { alignItems: "center", marginTop: 18 },
         s.avatar ? img(s.avatar, { width: 92, height: 92, borderRadius: 6, border: `3px solid ${GOLD}`, marginRight: 22 }) : null,
         h("div", { flexDirection: "column" },
@@ -88,7 +88,7 @@ export function compareCard(a, b) {
       th ? caps(`${th.name} · Mastery ${ROMAN[top.level]}`, 18, TIERS[top.level]) : null);
   };
   return frame("217,181,106", "50% 55%",
-    h("div", { position: "absolute", top: 54, left: 0, right: 0, justifyContent: "center" }, caps("Deadlock Mastery · Head to Head", 22)),
+    h("div", { position: "absolute", top: 54, left: 0, right: 0, justifyContent: "center" }, caps("Dead Ledger · Head to Head", 22)),
     h("div", { position: "absolute", top: 120, left: 60, right: 60, justifyContent: "space-between", alignItems: "center" },
       side(a, "center", GOLD),
       h("div", { fontFamily: "Forum", fontSize: 64, color: MUTED }, "vs"),

@@ -1,4 +1,4 @@
-"""Local dev server for Deadlock Mastery: static files, caching disabled.
+"""Local dev server for Dead Ledger: static files, caching disabled.
 
     python serve.py [port]      (default 8787)
 """
@@ -20,7 +20,7 @@ class NoCache(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     url = f"http://127.0.0.1:{PORT}/"
-    print(f"Deadlock Mastery running at {url}  (Ctrl+C to stop)")
+    print(f"Dead Ledger running at {url}  (Ctrl+C to stop)")
     if "--no-open" not in sys.argv:
         webbrowser.open(url)
     http.server.ThreadingHTTPServer(("127.0.0.1", PORT),

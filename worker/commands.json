@@ -1,7 +1,7 @@
 [
   {
     "name": "dossier",
-    "description": "A player's Deadlock Mastery dossier: account level, signature hero, win rate.",
+    "description": "A player's Dead Ledger dossier: account level, signature hero, win rate.",
     "integration_types": [0, 1], "contexts": [0, 1, 2],
     "options": [
       { "type": 3, "name": "player", "description": "Steam friend code, profile link or name (defaults to your linked account)", "required": false }

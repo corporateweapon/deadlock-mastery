@@ -1,4 +1,4 @@
-// Deadlock Mastery - app shell: data sync, routing, page rendering and interactions.
+// Dead Ledger - app shell: data sync, routing, page rendering and interactions.
 (function () {
   "use strict";
   const { S, D, T, BASE, state, store, CACHE_VER, REDUCED, CAN_HOVER, ROMAN, FLAVOR } = DM;
@@ -222,7 +222,7 @@
     $("#loader").hidden = true;
     status("");
     DM.pages.welcome($("#page"));
-    document.title = "Deadlock Mastery";
+    document.title = "Dead Ledger";
     window.scrollTo(0, 0);
   }
 
@@ -265,7 +265,7 @@
     if (scrollTop) window.scrollTo({ top: 0, behavior: "auto" });
     const titles = { overview: "", heroes: "Heroes · ", matches: "Ledger · ", codex: "Codex · ", compare: "Compare · ", ladder: "Ladders · ",
       hero: arg ? `${heroMeta(arg).name} · ` : "", match: arg ? `Match ${arg} · ` : "" };
-    document.title = `${titles[page] || ""}${state.profile ? state.profile.personaname + " · " : ""}Deadlock Mastery`;
+    document.title = `${titles[page] || ""}${state.profile ? state.profile.personaname + " · " : ""}Dead Ledger`;
     const si = document.querySelector(".me-slot .signin");
     if (si) si.setAttribute("href", `/auth/steam?r=${encodeURIComponent(location.hash || "")}`);
   }

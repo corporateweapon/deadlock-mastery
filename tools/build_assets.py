@@ -12,7 +12,7 @@ API = "https://api.deadlock-api.com"
 
 
 def get(path):
-    req = urllib.request.Request(API + path, headers={"User-Agent": "deadlock-mastery/0.1"})
+    req = urllib.request.Request(API + path, headers={"User-Agent": "dead-ledger/0.1"})
     with urllib.request.urlopen(req, timeout=120) as r:
         return json.load(r)
 

@@ -67,7 +67,7 @@ async function summaryOf(p, env) {
 }
 
 const button = (label, url) => ({ type: 1, components: [{ type: 2, style: 5, label, url }] });
-const footer = { text: "Deadlock Mastery · match data from deadlock-api.com" };
+const footer = { text: "Dead Ledger · match data from deadlock-api.com" };
 
 export async function run(name, o, user, env, base) {
   if (name === "link") {

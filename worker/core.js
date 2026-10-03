@@ -1,6 +1,6 @@
 // Server-side core: the same scoring/data code the site runs, plus caching and a compact
 // "dossier summary" used by share cards, the Discord bot and the ladder.
-globalThis.DM_FETCH_HEADERS = { "User-Agent": "deadlock-mastery (https://github.com/corporateweapon/deadlock-mastery)" };
+globalThis.DM_FETCH_HEADERS = { "User-Agent": "dead-ledger (https://github.com/corporateweapon/deadlock-mastery)" };
 // Optional deadlock-api key (higher rate limits). Set as a secret: DEADLOCK_API_KEY.
 export function useApiKey(env) {
   if (env.DEADLOCK_API_KEY) globalThis.DM_FETCH_HEADERS["X-API-KEY"] = env.DEADLOCK_API_KEY;

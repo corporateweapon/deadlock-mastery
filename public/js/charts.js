@@ -1,4 +1,4 @@
-// Deadlock Mastery - hand-rolled SVG charts in the house style, with hover read-outs.
+// Dead Ledger - hand-rolled SVG charts in the house style, with hover read-outs.
 (function () {
   "use strict";
   const { esc } = DM.u;

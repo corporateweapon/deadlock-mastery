@@ -1,4 +1,4 @@
-// Deadlock Mastery - Cloudflare Worker. Serves the static site (via the ASSETS binding) and adds:
+// Dead Ledger - Cloudflare Worker. Serves the static site (via the ASSETS binding) and adds:
 //   /p/...           share links with rich previews (Discord, socials) that open the app
 //   /og/...png       generated share-card images
 //   /api/...         summary, ladder positions, official ladders, signed-in user, vanity lookup
@@ -74,7 +74,7 @@ async function withAnalytics(request, env) {
 async function share(url, env, id, kind, arg) {
   const base = env.SITE_URL || url.origin;
   const hashPath = `#${id}${kind ? `/${kind}/${arg}` : ""}`;
-  let title = "Deadlock Mastery", description = "Account levels, hero mastery and full match stats for Deadlock.";
+  let title = "Dead Ledger", description = "Account levels, hero mastery and full match stats for Deadlock.";
   let image = `${base}/og/p/${id}.png`, color = "#d9b56a";
   try {
     const s = await summary(env, id);
@@ -94,7 +94,7 @@ async function share(url, env, id, kind, arg) {
         const o = await summary(env, arg);
         if (o) {
           title = `${s.name} vs ${o.name}`;
-          description = `Account level ${s.level} vs ${o.level} · ${s.games} vs ${o.games} games · head to head on Deadlock Mastery`;
+          description = `Account level ${s.level} vs ${o.level} · ${s.games} vs ${o.games} games · head to head on Dead Ledger`;
           image = `${base}/og/p/${id}/compare/${arg}.png?v=${s.points}-${o.points}`;
         }
       } else if (kind === "match") {
@@ -106,7 +106,7 @@ async function share(url, env, id, kind, arg) {
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<meta property="og:type" content="website"><meta property="og:site_name" content="Deadlock Mastery">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Dead Ledger">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${esc(url.href)}"><meta property="og:image" content="${esc(image)}">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">

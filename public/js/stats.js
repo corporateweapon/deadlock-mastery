@@ -1,4 +1,4 @@
-// Deadlock Mastery - core game stats (the "Core Stats" view). Pure aggregation, no scoring.
+// Dead Ledger - core game stats (the "Core Stats" view). Pure aggregation, no scoring.
 // Works in the browser (window.DMStats) and Node (require).
 (function (root) {
   "use strict";

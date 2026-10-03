@@ -30,7 +30,7 @@
         </svg>
       </div>
       <div class="eyebrow">Meta progression for Deadlock</div>
-      <h1 class="wl-title"><span>Deadlock</span> <em>Mastery</em></h1>
+      <h1 class="wl-title"><span>Dead</span> <em>Ledger</em></h1>
       <p class="flavor">“The city keeps a ledger on everyone. Here's yours.”</p>
       ${state.me ? `<a class="btn-gold wl-steam" href="#${state.me.accountId}">Continue to my dossier</a><div class="wl-or">or look someone else up</div>`
         : state.server && state.server.auth ? `<a class="btn-gold wl-steam" href="/auth/steam">

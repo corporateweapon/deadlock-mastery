@@ -1,4 +1,4 @@
-// Deadlock Mastery - shared state, helpers and asset lookups. Everything hangs off window.DM.
+// Dead Ledger - shared state, helpers and asset lookups. Everything hangs off window.DM.
 (function () {
   "use strict";
   const S = window.DMScoring, D = window.DMData, T = window.DMStats;

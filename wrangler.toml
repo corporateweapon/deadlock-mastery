@@ -1,6 +1,6 @@
-# Deadlock Mastery on Cloudflare Workers: static site + share cards, Steam sign-in, Discord bot, ladders.
+# Dead Ledger on Cloudflare Workers: static site + share cards, Steam sign-in, Discord bot, ladders.
 # See DEPLOY.md for the one-time setup (KV namespace, secrets, Discord app).
-name = "deadlock-mastery"
+name = "dead-ledger"
 main = "worker/index.js"
 compatibility_date = "2026-09-01"
 

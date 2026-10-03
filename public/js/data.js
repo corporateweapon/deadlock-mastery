@@ -1,4 +1,4 @@
-// Deadlock Mastery - deadlock-api.com access + record normalization.
+// Dead Ledger - deadlock-api.com access + record normalization.
 // Works in the browser (window.DMData) and Node 18+ (require), both have fetch.
 (function (root) {
   "use strict";

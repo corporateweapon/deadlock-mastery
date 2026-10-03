@@ -1,5 +1,5 @@
 {
-  "name": "deadlock-mastery",
+  "name": "dead-ledger",
   "private": true,
   "scripts": {
     "dev": "wrangler dev",

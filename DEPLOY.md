@@ -1,4 +1,4 @@
-# Deploying Deadlock Mastery to Cloudflare
+# Deploying Dead Ledger to Cloudflare
 
 The site runs as one Cloudflare Worker: it serves `public/` and adds share cards, Steam sign-in,
 the Discord bot and ladder lookups. GitHub Pages keeps serving the plain static site as a
@@ -28,11 +28,11 @@ Run commands from the project folder.
    ```
    npm run deploy
    ```
-   You get a `https://deadlock-mastery.<you>.workers.dev` address immediately.
+   You get a `https://dead-ledger.<you>.workers.dev` address immediately.
 
 ## 2. Your domain
 
-In the Cloudflare dashboard: **Workers & Pages → deadlock-mastery → Settings → Domains & Routes
+In the Cloudflare dashboard: **Workers & Pages → dead-ledger → Settings → Domains & Routes
 → Add → Custom domain**. Then set `SITE_URL` in `wrangler.toml` to `https://yourdomain.com` and
 `npm run deploy` again (share links and the bot use it).
 

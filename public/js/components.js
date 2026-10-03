@@ -1,4 +1,4 @@
-// Deadlock Mastery - reusable visual pieces (crests, medallion, sigil, tables, items...).
+// Dead Ledger - reusable visual pieces (crests, medallion, sigil, tables, items...).
 (function () {
   "use strict";
   const { S, ROMAN, SHORT, ARCHETYPE, SLOT_NAMES, state } = DM;

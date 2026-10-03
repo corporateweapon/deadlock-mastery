@@ -1,4 +1,6 @@
-# Deadlock Mastery
+# Dead Ledger
+
+*Mastery and stats for Deadlock.*
 
 Third-party meta progression for Deadlock: an uncapped **account level** and a League-style
 **hero mastery** (0–X), both built from your real match history on
@@ -31,7 +33,7 @@ static fallback; the server-only extras switch themselves off there.
 ## Run
 
 ```
-"Launch Deadlock Mastery.bat"   # static site only: python serve.py [port] -> http://127.0.0.1:8787/
+"Launch Dead Ledger.bat"   # static site only: python serve.py [port] -> http://127.0.0.1:8787/
 npm install && npm run dev      # full site with the Worker features -> http://127.0.0.1:8787/
 ```
 

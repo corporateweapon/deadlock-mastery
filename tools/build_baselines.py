@@ -18,7 +18,7 @@ def get(path, **params):
     url = f"{API}{path}?{urllib.parse.urlencode(params)}"
     for attempt in range(4):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "deadlock-mastery/0.1"})
+            req = urllib.request.Request(url, headers={"User-Agent": "dead-ledger/0.1"})
             with urllib.request.urlopen(req, timeout=120) as r:
                 return json.load(r)
         except Exception as e:  # rate limit / transient

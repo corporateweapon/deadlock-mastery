@@ -1,4 +1,4 @@
-// Deadlock Mastery - scoring model.
+// Dead Ledger - scoring model.
 // Pure functions + every tuning knob in one place. No DOM, no fetch: runs in the
 // browser (window.DMScoring) and in Node (require) for the balance report.
 (function (root) {
