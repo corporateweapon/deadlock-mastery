@@ -7,7 +7,7 @@ Third-party meta progression for Deadlock: an uncapped **account level** and a L
 [deadlock-api.com](https://deadlock-api.com). No backend and no API key: the page runs
 in the browser and caches each account in `localStorage`.
 
-**Live:** https://deadlockledger.net (static fallback: https://corporateweapon.github.io/deadlock-mastery/)
+**Live:** https://deadledger.net (static fallback: https://corporateweapon.github.io/deadlock-mastery/)
 
 Share any page by copying its link (the chain-link button in the header does it for you):
 a dossier is `#<SteamID3>`, a comparison is `#<you>/compare/<friend>`, a match is

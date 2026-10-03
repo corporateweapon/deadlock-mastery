@@ -6,8 +6,8 @@ compatibility_date = "2026-09-01"
 
 # Custom domains (DNS + certificates are set up automatically on deploy).
 routes = [
-  { pattern = "deadlockledger.net", custom_domain = true },
-  { pattern = "www.deadlockledger.net", custom_domain = true },
+  { pattern = "deadledger.net", custom_domain = true },
+  { pattern = "www.deadledger.net", custom_domain = true },
 ]
 
 [assets]
@@ -21,7 +21,7 @@ binding = "KV"
 id = "a4c40e3903c74db281bc015ef8a97f9c"   # npx wrangler kv namespace create KV
 
 [vars]
-SITE_URL = "https://deadlockledger.net"
+SITE_URL = "https://deadledger.net"
 DISCORD_APP_ID = ""   # Discord application id (public)
 CF_BEACON_TOKEN = ""  # Cloudflare Web Analytics token (public)
 # Secrets (never in this file): SESSION_SECRET, DISCORD_PUBLIC_KEY, STEAM_API_KEY (optional), DEADLOCK_API_KEY (optional)
