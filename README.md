@@ -59,6 +59,11 @@ and raw game stats, and the choice is remembered.
 
 Rank-ups trigger a full-screen ceremony on the next refresh (preview with `?ceremony`).
 
+Small comforts: `/` focuses the search (recently viewed accounts appear when it's empty, arrow keys
+walk the results, Esc closes), ledger columns sort on click, the roster has a hero finder, the back
+button returns you to where you were on the page, wide screens get a chapter rail, phones get a
+bottom tab bar, and **Dim the lights** in the footer switches the smoke, grain and glow off.
+
 ## Layout
 
 | Path | What |
@@ -69,6 +74,7 @@ Rank-ups trigger a full-screen ceremony on the next refresh (preview with `?cere
 | `public/js/core.js` | Shared state, formatting helpers, asset lookups, routes (`window.DM`) |
 | `public/js/components.js` | Crests, medallion, radar, ladders, seals, item icons, tables |
 | `public/js/charts.js` | SVG line charts with hover read-outs, bars, columns, calendar, donut |
+| `public/js/ui.js` | Shell polish: tooltips, toasts, sync tube, chapter rail, back-to-top, keyboard, calm mode |
 | `public/js/pages/*.js` | One file per page |
 | `public/js/app.js` | Sync, routing, interactions, ceremony |
 | `public/js/voicelines.js` | One voice line per hero, verbatim from deadlock.wiki |

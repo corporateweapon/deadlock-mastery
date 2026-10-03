@@ -199,7 +199,7 @@
       </li>`).join("")}</ol>`;
   }
 
-  const head = (eyebrow, title, right = "") => `<div class="section-head">
+  const head = (eyebrow, title, right = "") => `<div class="section-head" data-rail="${String(title).replace(/<[^>]+>/g, "")}">
       <div class="orn-title"><span class="eyebrow">${eyebrow}</span><h2>${title}</h2></div>${right ? `<div class="controls">${right}</div>` : ""}
     </div>`;
 

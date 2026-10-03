@@ -132,6 +132,7 @@
   async function sync() {
     const id = state.accountId;
     state.busy = true;
+    DM.ui.busy(true);
     $("#refresh").classList.add("spinning");
     $("#refresh").disabled = true;
     try {
@@ -157,6 +158,7 @@
       status(e.message || String(e), "error");
     } finally {
       state.busy = false;
+      DM.ui.busy(false);
       $("#refresh").disabled = false;
       $("#refresh").classList.remove("spinning");
     }
@@ -226,15 +228,32 @@
     window.scrollTo(0, 0);
   }
 
+  // Where the reader was on each page, so the back button lands them where they left off
+  // (a hash that matches the previous stop is treated as "back").
+  const trail = [], scrollMemo = new Map();
+  let currentHash = null;
+  function remember(newHash) {
+    if (currentHash != null) scrollMemo.set(currentHash, scrollY);
+    let back = false;
+    if (trail.length >= 2 && trail[trail.length - 2] === newHash) { trail.pop(); back = true; }
+    else if (trail[trail.length - 1] !== newHash) trail.push(newHash);
+    currentHash = newHash;
+    return back && scrollMemo.has(newHash) ? scrollMemo.get(newHash) : null;
+  }
+
   async function route() {
     const r = DM.parseHash(location.hash);
+    const restore = remember(location.hash);
     if (location.hash === "#start" || !r.acct) return showWelcome();
     const acct = r.acct;
     const pageChanged = r.page !== state.route.page || r.arg !== state.route.arg;
     state.route = { page: r.page, arg: r.arg };
     $("#lookup-input").value = String(acct);
     if (acct !== state.accountId) { await openAccount(acct); return; }
-    if (state.result) renderPage(pageChanged);
+    if (state.result) {
+      renderPage(pageChanged && restore == null);
+      if (restore != null) requestAnimationFrame(() => scrollTo(0, restore));
+    }
   }
 
   function renderPage(scrollTop) {
@@ -258,7 +277,7 @@
     const fn = DM.pages[page] || DM.pages.overview;
     fn(el, arg);
     if (state.animate) { runCountUps(el); setTimeout(() => { state.animate = false; }, 50); }
-    if (scrollTop) window.scrollTo({ top: 0, behavior: "auto" });
+    if (scrollTop) { window.scrollTo({ top: 0, behavior: "auto" }); DM.ui.enter(); }
     const titles = { overview: "", heroes: "Heroes · ", matches: "Ledger · ", codex: "Codex · ", compare: "Compare · ", ladder: "Ladders · ",
       hero: arg ? `${heroMeta(arg).name} · ` : "", match: arg ? `Match ${arg} · ` : "" };
     document.title = `${titles[page] || ""}${state.profile ? state.profile.personaname + " · " : ""}Dead Ledger`;
@@ -267,6 +286,8 @@
   }
 
   // Mastery XP <-> Core Stats, everywhere at once.
+  DM.rerender = () => renderPage(false);
+
   function setView(v) {
     state.view = v === "stats" ? "stats" : "xp";
     try { localStorage.setItem(CACHE_VER + "view", state.view); } catch { /* ignore */ }
@@ -381,12 +402,24 @@
     } catch (e) { status(e.message, "error"); }
   }
 
+  // Focusing the search offers the accounts this browser has opened before.
+  function showRecent() {
+    const box = $("#search-results");
+    const list = (store.get("recent") || []).filter((r) => r && r.id && r.id !== state.accountId).slice(0, 5);
+    if (!list.length) return;
+    box.innerHTML = `<div class="sr-head">Recently viewed</div>` + list.map((r) => `<button type="button" data-id="${r.id}">
+      ${r.avatar ? `<img src="${esc(r.avatar)}" alt="">` : `<span class="sr-blank"></span>`}<span>${esc(r.name || `Player ${r.id}`)}</span><span class="sr-id">${r.id}</span></button>`).join("");
+    box.hidden = false;
+  }
+
   function wire() {
     $("#lookup").addEventListener("submit", (e) => { e.preventDefault(); handleLookup($("#lookup-input").value); });
+    $("#lookup-input").addEventListener("focus", (e) => { e.target.select(); showRecent(); });
+    $("#lookup-input").addEventListener("input", () => { if ($("#search-results").querySelector(".sr-head")) $("#search-results").hidden = true; });
     $("#refresh").addEventListener("click", () => state.accountId && openAccount(state.accountId, { force: true }));
     $("#share").addEventListener("click", async () => {
       const url = shareUrl();
-      try { await navigator.clipboard.writeText(url); status(state.server ? "Link copied. It shows a preview card in Discord and opens this exact page." : "Link copied. Anyone with it lands on this exact page.", "ok"); }
+      try { await navigator.clipboard.writeText(url); DM.ui.toast(state.server ? "Link copied. It unfurls with a preview card in Discord." : "Link copied. Anyone with it lands on this exact page.", "ok"); }
       catch { status(url, "ok"); }
     });
 
@@ -423,7 +456,6 @@
       if (e.target.matches("[data-hero-filter]")) { state.heroFilter = Number(e.target.value); state.shown = PAGE; renderPage(false); }
     });
     window.addEventListener("hashchange", route);
-    window.addEventListener("scroll", () => document.body.classList.toggle("scrolled", scrollY > 8), { passive: true });
     wireTilt();
   }
 

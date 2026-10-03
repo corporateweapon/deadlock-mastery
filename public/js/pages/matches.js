@@ -6,14 +6,41 @@
   const { heroMeta, buildOf } = DM.a;
   const C = DM.c;
 
+  // Column sorting on the full ledger. Each key reads one value off a scored row.
+  const SORTS = {
+    t: (x) => x.rec.t, hero: (x) => heroMeta(x.rec.hero).name, mode: (x) => modeName(x.rec), res: (x) => (x.rec.won ? 1 : 0),
+    kda: (x) => (x.rec.k + x.rec.a) / Math.max(1, x.rec.d), nw: (x) => x.rec.nw || 0, dmg: (x) => (x.rec.full ? x.rec.dmg : null),
+    heal: (x) => (x.rec.full ? x.rec.heal : null), obj: (x) => (x.rec.full ? x.rec.obj : null), lh: (x) => x.rec.lh || 0,
+    dur: (x) => x.rec.dur || 0, pts: (x) => (x.score.eligible ? x.score.points : null),
+  };
+  const DEFAULT_SORT = { key: "t", dir: -1 };
+  function sortRows(rows) {
+    const { key, dir } = state.ledgerSort || DEFAULT_SORT;
+    const get = SORTS[key] || SORTS.t;
+    // Rows without the value (uncounted games, no detailed stats yet) sink to the bottom either way.
+    return rows.slice().sort((a, b) => {
+      const va = get(a), vb = get(b);
+      if (va == null || vb == null) return (va == null) - (vb == null) || b.rec.t - a.rec.t;
+      const c = typeof va === "string" ? va.localeCompare(vb) : va - vb;
+      return c ? c * dir : b.rec.t - a.rec.t;
+    });
+  }
+
   // rows: scored entries ({ rec, score }) newest first.
   function ledger(rows, opts = {}) {
     const stats = isStats();
+    const sort = opts.sortable ? (state.ledgerSort || DEFAULT_SORT) : null;
+    // th(label, sortKey, classes): sortable headers carry data-lsort and show their direction.
+    const th = (label, key, cls = "") => {
+      if (!sort || !key) return `<th class="${cls}">${label}</th>`;
+      const on = sort.key === key;
+      return `<th class="${cls} sortable${on ? (sort.dir > 0 ? " asc" : " desc") : ""}" data-lsort="${key}" aria-sort="${on ? (sort.dir > 0 ? "ascending" : "descending") : "none"}" title="Sort by ${label.replace(/<[^>]+>/g, "").toLowerCase()}"><button type="button">${label}</button></th>`;
+    };
     const head = stats
-      ? `<tr><th>When</th><th>Hero</th><th class="hide-xs">Mode</th><th>Result</th><th class="num">K / D / A</th><th class="num">Souls</th>
-         <th class="num">Hero dmg</th><th class="num hide-sm">Healing</th><th class="num hide-sm">Obj dmg</th><th class="num hide-md">LH / Dn</th><th class="hide-md">Build</th><th class="num">Length</th></tr>`
-      : `<tr><th>When</th><th>Hero</th><th class="hide-xs">Mode</th><th>Result</th><th class="num">K / D / A</th><th class="num hide-sm">Souls</th>
-         <th class="hide-md">Build</th><th class="num">Points</th><th class="center">Grade</th></tr>`;
+      ? `<tr>${th("When", "t")}${th("Hero", "hero")}${th("Mode", "mode", "hide-xs")}${th("Result", "res")}${th("K / D / A", "kda", "num")}${th("Souls", "nw", "num")}
+         ${th("Hero dmg", "dmg", "num")}${th("Healing", "heal", "num hide-sm")}${th("Obj dmg", "obj", "num hide-sm")}${th("LH / Dn", "lh", "num hide-md")}${th("Build", null, "hide-md")}${th("Length", "dur", "num")}</tr>`
+      : `<tr>${th("When", "t")}${th("Hero", "hero")}${th("Mode", "mode", "hide-xs")}${th("Result", "res")}${th("K / D / A", "kda", "num")}${th("Souls", "nw", "num hide-sm")}
+         ${th("Build", null, "hide-md")}${th("Points", "pts", "num")}${th("Grade", null, "center")}</tr>`;
     const metaCell = (r, k) => r.full ? fmtK(r[k] || 0) : '<span class="void">–</span>';
     const body = rows.map(({ rec: r, score: s }) => {
       const pts = s.eligible
@@ -45,7 +72,7 @@
   }
 
   function render(el) {
-    const rows = filtered();
+    const rows = sortRows(filtered());
     const counted = rows.filter((x) => x.score.eligible);
     const st = DM.T.aggregate(counted.map((x) => x.rec));
     const pts = counted.reduce((s, x) => s + x.score.points, 0);
@@ -66,10 +93,21 @@
         <div><dt>Points</dt><dd>${fmt(pts)}</dd></div>
         <div><dt>Time</dt><dd>${(st.seconds / 3600).toFixed(1)}<small>h</small></dd></div>
       </dl>
-      ${ledger(rows.slice(0, state.shown))}
+      ${ledger(rows.slice(0, state.shown), { sortable: true })}
       ${state.shown < rows.length ? `<button class="btn-ghost wide" type="button" data-more>Turn the page · ${fmt(rows.length - state.shown)} more</button>` : ""}
     </section>`;
   }
+
+  // Header clicks: same column flips direction, a new column starts with its natural order.
+  document.addEventListener("click", (e) => {
+    const th = e.target.closest("th[data-lsort]");
+    if (!th) return;
+    const key = th.dataset.lsort, cur = state.ledgerSort || DEFAULT_SORT;
+    const natural = key === "hero" || key === "mode" ? 1 : -1;
+    state.ledgerSort = cur.key === key ? { key, dir: -cur.dir } : { key, dir: natural };
+    state.shown = Math.max(state.shown, 30);
+    DM.rerender();
+  });
 
   DM.ledger = ledger;
   DM.pages = DM.pages || {};

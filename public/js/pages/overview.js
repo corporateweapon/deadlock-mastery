@@ -8,7 +8,7 @@
 
   function render(el) {
     el.innerHTML = `
-      <section class="dossier panel">${dossier()}</section>
+      <section class="dossier panel" data-rail="Dossier">${dossier()}</section>
       ${spotlight()}
       ${pursuits()}
       <section class="panel form-panel" id="form-panel">${formPanel()}</section>
@@ -127,7 +127,7 @@
     const top = Object.values(state.result.heroes).sort((x, y) => y.points - x.points)[0];
     if (!top) return "";
     const meta = heroMeta(top.hero), m = top.mastery;
-    return `<section class="spotlight t-${tier(m.level)}" style="--hero-rgb:${meta.rgb}">
+    return `<section class="spotlight t-${tier(m.level)}" style="--hero-rgb:${meta.rgb}" data-rail="Signature hero">
       ${meta.bg ? `<div class="sp-bg" style="background-image:url('${esc(meta.bg)}')"></div>` : ""}
       <div class="sp-veil"></div>
       <div class="sp-content">
