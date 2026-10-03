@@ -20,7 +20,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
-    // www.deadlockledger.net -> deadlockledger.net (keeps path, query and hash).
+    // www.deadledger.net -> deadledger.net (keeps path, query and hash).
     if (url.hostname.startsWith("www.")) {
       url.hostname = url.hostname.slice(4);
       return Response.redirect(url.toString(), 301);
