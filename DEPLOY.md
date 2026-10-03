@@ -83,6 +83,18 @@ stays well inside that at normal traffic. Built-in protection (see `[[ratelimits
 
 Also set a billing alert: dashboard → **Notifications → Add → Usage-based billing** (e.g. $10).
 
+## Taking the site down
+
+| Need | Do this | Undo |
+|---|---|---|
+| **Maintenance page** (visitors see "Closed for repairs") | Dashboard → Workers & Pages → dead-ledger → Settings → Variables and Secrets → Add `MAINTENANCE` = `on` (Text) → Deploy. Optional `MAINTENANCE_MESSAGE` for your own line. | Delete the variable (or set `off`) → Deploy |
+| **Unplug the site** | Same Settings → Domains & Routes → remove `deadledger.net` and `www` | `npm run deploy` reattaches them |
+| **Bad update** | `npx wrangler rollback` (or Deployments in the dashboard) | Deploy again |
+| **Shut down for good** | `npx wrangler delete` | Redeploy + re-add secrets |
+
+Deploys never flip the maintenance switch back (`keep_vars = true`). The GitHub Pages copy runs
+separately: repo Settings → Pages → Unpublish.
+
 ## Updating
 
 Push to GitHub as usual (updates the fallback), and `npm run deploy` for the live site.

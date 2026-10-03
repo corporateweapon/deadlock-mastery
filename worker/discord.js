@@ -20,13 +20,17 @@ async function verify(body, signature, timestamp, publicKey) {
   } catch { return false; }
 }
 
-export async function interactions(request, env, ctx) {
+export async function interactions(request, env, ctx, opts = {}) {
   if (!env.DISCORD_PUBLIC_KEY) return new Response("Discord bot not configured", { status: 503 });
   const body = await request.text();
   const ok = await verify(body, request.headers.get("X-Signature-Ed25519"), request.headers.get("X-Signature-Timestamp"), env.DISCORD_PUBLIC_KEY);
   if (!ok) return new Response("invalid request signature", { status: 401 });
   const i = JSON.parse(body);
   if (i.type === 1) return json({ type: 1 }); // PING
+  if (opts.maintenance) {
+    if (i.type === 4) return json({ type: 8, data: { choices: [] } });
+    return json({ type: 4, data: { content: "🛠️ Dead Ledger is down for maintenance. Back shortly.", flags: 64 } });
+  }
 
   if (i.type === 4) { // autocomplete: hero names
     const focused = (i.data.options || []).find((o) => o.focused);

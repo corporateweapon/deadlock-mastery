@@ -3,6 +3,8 @@
 name = "dead-ledger"
 main = "worker/index.js"
 compatibility_date = "2026-09-01"
+# Keep variables set in the dashboard (e.g. the MAINTENANCE switch) when deploying.
+keep_vars = true
 
 # Custom domains (DNS + certificates are set up automatically on deploy).
 routes = [
@@ -24,6 +26,7 @@ id = "a4c40e3903c74db281bc015ef8a97f9c"   # npx wrangler kv namespace create KV
 SITE_URL = "https://deadledger.net"
 DISCORD_APP_ID = ""   # Discord application id (public)
 CF_BEACON_TOKEN = "9501fcee116943049a2841dd86763f3d"  # Cloudflare Web Analytics token (public)
+# MAINTENANCE / MAINTENANCE_MESSAGE are set in the dashboard, not here (see worker/maintenance.js).
 # Secrets (never in this file): SESSION_SECRET, DISCORD_PUBLIC_KEY, STEAM_API_KEY (optional), DEADLOCK_API_KEY (optional)
 
 # Per-visitor request limits (Cloudflare's built-in rate limiter; counted per location, free).

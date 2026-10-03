@@ -10,6 +10,7 @@ import { dossierCard, heroCard, compareCard, png } from "./og.js";
 import { login, callback, logout, readSession } from "./auth.js";
 import { interactions } from "./discord.js";
 import { allow, bucketFor, clientKey, tooMany } from "./limits.js";
+import { isMaintenance, maintenanceResponse } from "./maintenance.js";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
 const json = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), {
@@ -24,6 +25,12 @@ export default {
     if (url.hostname.startsWith("www.")) {
       url.hostname = url.hostname.slice(4);
       return Response.redirect(url.toString(), 301);
+    }
+    // Maintenance switch: everything the Worker answers returns 503. Discord still gets its
+    // signature-verified PING answered so the bot's endpoint registration stays valid.
+    if (isMaintenance(env)) {
+      if (path === "/discord/interactions" && request.method === "POST") return interactions(request, env, ctx, { maintenance: true });
+      return maintenanceResponse(path, env);
     }
     useApiKey(env);
     const bucket = bucketFor(path);
