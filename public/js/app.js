@@ -213,8 +213,8 @@
     }
   }
 
-  // No account in the link: reopen this browser's last player, or show the welcome page.
-  // "#start" always shows the welcome page.
+  // No account in the link: the site opens on the search (welcome) page. Returning visitors and
+  // signed-in players get one-click shortcuts there instead of being dropped on a dossier.
   function showWelcome() {
     state.route = { page: "welcome", arg: null };
     document.body.dataset.page = "welcome";
@@ -228,14 +228,10 @@
 
   async function route() {
     const r = DM.parseHash(location.hash);
-    if (location.hash === "#start") return showWelcome();
-    let last = null;
-    try { last = Number(localStorage.getItem(CACHE_VER + "last")) || null; } catch { /* ignore */ }
-    const acct = r.acct || state.accountId || (state.me && state.me.accountId) || last;
-    if (!acct) return showWelcome();
+    if (location.hash === "#start" || !r.acct) return showWelcome();
+    const acct = r.acct;
     const pageChanged = r.page !== state.route.page || r.arg !== state.route.arg;
     state.route = { page: r.page, arg: r.arg };
-    if (!r.acct) history.replaceState(null, "", location.pathname + location.search + "#" + acct);
     $("#lookup-input").value = String(acct);
     if (acct !== state.accountId) { await openAccount(acct); return; }
     if (state.result) renderPage(pageChanged);

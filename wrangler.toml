@@ -4,6 +4,12 @@ name = "dead-ledger"
 main = "worker/index.js"
 compatibility_date = "2026-09-01"
 
+# Custom domains (DNS + certificates are set up automatically on deploy).
+routes = [
+  { pattern = "deadlockledger.net", custom_domain = true },
+  { pattern = "www.deadlockledger.net", custom_domain = true },
+]
+
 [assets]
 directory = "./public"
 binding = "ASSETS"
@@ -12,10 +18,10 @@ run_worker_first = ["/", "/index.html", "/p/*", "/og/*", "/api/*", "/auth/*", "/
 
 [[kv_namespaces]]
 binding = "KV"
-id = "replace-with-your-kv-namespace-id"   # npx wrangler kv namespace create KV
+id = "a4c40e3903c74db281bc015ef8a97f9c"   # npx wrangler kv namespace create KV
 
 [vars]
-SITE_URL = ""         # e.g. "https://deadlockmastery.com" once your domain is live
+SITE_URL = "https://deadlockledger.net"
 DISCORD_APP_ID = ""   # Discord application id (public)
 CF_BEACON_TOKEN = ""  # Cloudflare Web Analytics token (public)
 # Secrets (never in this file): SESSION_SECRET, DISCORD_PUBLIC_KEY, STEAM_API_KEY (optional), DEADLOCK_API_KEY (optional)
