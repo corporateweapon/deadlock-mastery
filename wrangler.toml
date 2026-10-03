@@ -19,3 +19,30 @@ SITE_URL = ""         # e.g. "https://deadlockmastery.com" once your domain is l
 DISCORD_APP_ID = ""   # Discord application id (public)
 CF_BEACON_TOKEN = ""  # Cloudflare Web Analytics token (public)
 # Secrets (never in this file): SESSION_SECRET, DISCORD_PUBLIC_KEY, STEAM_API_KEY (optional), DEADLOCK_API_KEY (optional)
+
+# Per-visitor request limits (Cloudflare's built-in rate limiter; counted per location, free).
+# Each kind of request gets a budget sized to its cost. period must be 10 or 60 seconds.
+[[ratelimits]]
+name = "RL_CARDS"     # share-card images (the CPU-heavy part)
+namespace_id = "7101"
+simple = { limit = 20, period = 60 }
+
+[[ratelimits]]
+name = "RL_LADDER"    # ladder position searches (many upstream calls when cold)
+namespace_id = "7102"
+simple = { limit = 30, period = 60 }
+
+[[ratelimits]]
+name = "RL_LOOKUP"    # dossier summaries, share pages, player lookups
+namespace_id = "7103"
+simple = { limit = 40, period = 60 }
+
+[[ratelimits]]
+name = "RL_API"       # everything else the Worker answers (health, me, official ladders, sign-in)
+namespace_id = "7104"
+simple = { limit = 120, period = 60 }
+
+[[ratelimits]]
+name = "RL_BOT"       # Discord commands, per Discord user
+namespace_id = "7105"
+simple = { limit = 10, period = 60 }

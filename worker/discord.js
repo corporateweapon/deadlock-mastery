@@ -2,6 +2,7 @@
 // Every command defers, does its work in the background, then edits the reply.
 import { S, ROMAN, VOICE, HEROES, hero, heroByName, rankFor, resolvePlayer, summary } from "./core.js";
 import { official, findOfficial, position } from "./ladder.js";
+import { allow } from "./limits.js";
 
 const GOLD = 0xd9b56a;
 const API = "https://discord.com/api/v10";
@@ -41,6 +42,9 @@ export async function interactions(request, env, ctx) {
     const user = (i.member && i.member.user) || i.user;
     const base = env.SITE_URL || new URL(request.url).origin;
     const ephemeral = name === "link" || name === "unlink";
+    if (!(await allow(env, "RL_BOT", user.id))) {
+      return json({ type: 4, data: { content: "⏳ Easy there: that's a lot of commands in a minute. Try again shortly.", flags: 64 } });
+    }
     ctx.waitUntil(run(name, opts, user, env, base)
       .catch((e) => ({ content: `⚠️ ${e.message || "Something went wrong."}` }))
       .then((msg) => fetch(`${API}/webhooks/${i.application_id}/${i.token}/messages/@original`, {

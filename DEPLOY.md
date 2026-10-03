@@ -68,6 +68,21 @@ Commands: `/dossier`, `/mastery hero:`, `/compare player:`, `/ladder hero:`, `/l
 - **deadlock-api key** (higher rate limits for ladders as traffic grows): from deadlock-api's
   Patreon, then `npx wrangler secret put DEADLOCK_API_KEY`.
 
+## Costs and safeguards
+
+Workers Paid includes 10M Worker requests and 30M CPU-ms a month; static files are free. Dead Ledger
+stays well inside that at normal traffic. Built-in protection (see `[[ratelimits]]` in `wrangler.toml`):
+
+| Budget (per visitor, per minute) | Covers |
+|---|---|
+| 20 | share-card images (also cached at the edge for an hour, so repeats cost nothing) |
+| 30 | ladder position searches |
+| 40 | dossier summaries, share pages, player lookups |
+| 120 | everything else the Worker answers |
+| 10 per Discord user | bot commands |
+
+Also set a billing alert: dashboard → **Notifications → Add → Usage-based billing** (e.g. $10).
+
 ## Updating
 
 Push to GitHub as usual (updates the fallback), and `npm run deploy` for the live site.

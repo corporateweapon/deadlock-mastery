@@ -9,6 +9,7 @@ import { official, position, REGIONS } from "./ladder.js";
 import { dossierCard, heroCard, compareCard, png } from "./og.js";
 import { login, callback, logout, readSession } from "./auth.js";
 import { interactions } from "./discord.js";
+import { allow, bucketFor, clientKey, tooMany } from "./limits.js";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
 const json = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), {
@@ -20,11 +21,19 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
     useApiKey(env);
+    const bucket = bucketFor(path);
+    if (bucket && !(await allow(env, bucket, clientKey(request)))) return tooMany(path);
     try {
       if (path === "/" || path === "/index.html") return withAnalytics(request, env);
       let m;
-      if ((m = path.match(/^\/p\/(\d+)(?:\/(hero|compare|match)\/(\d+))?\/?$/))) return share(url, env, Number(m[1]), m[2], m[3] && Number(m[3]));
-      if ((m = path.match(/^\/og\/p\/(\d+)(?:\/(hero|compare)\/(\d+))?\.png$/))) return card(env, ctx, Number(m[1]), m[2], m[3] && Number(m[3]));
+      if ((m = path.match(/^\/p\/(\d+)(?:\/(hero|compare|match)\/(\d+))?\/?$/))) {
+        const [, id, kind, arg] = m;
+        return edgeCached(request, ctx, () => share(url, env, Number(id), kind, arg && Number(arg)));
+      }
+      if ((m = path.match(/^\/og\/p\/(\d+)(?:\/(hero|compare)\/(\d+))?\.png$/))) {
+        const [, id, kind, arg] = m;
+        return edgeCached(request, ctx, () => card(env, ctx, Number(id), kind, arg && Number(arg)));
+      }
       if (path === "/api/health") return json({ ok: true, auth: !!env.SESSION_SECRET, steamKey: !!env.STEAM_API_KEY, site: env.SITE_URL || null,
         discord: env.DISCORD_APP_ID ? `https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}` : null }, 200, CORS);
       if (path === "/api/me") {
@@ -60,6 +69,20 @@ export default {
     }
   },
 };
+
+// Serve repeat requests for share pages / card images from Cloudflare's edge cache, so a card is
+// rendered once per hour per URL instead of on every unfurl. (No-op where the Cache API isn't available.)
+async function edgeCached(request, ctx, make) {
+  const cache = typeof caches !== "undefined" ? caches.default : null;
+  const key = new Request(request.url, { method: "GET" });
+  if (cache) {
+    const hit = await cache.match(key).catch(() => null);
+    if (hit) return hit;
+  }
+  const res = await make();
+  if (cache && res.ok) ctx.waitUntil(cache.put(key, res.clone()).catch(() => {}));
+  return res;
+}
 
 // Inject Cloudflare Web Analytics (cookie-free) when a beacon token is configured.
 async function withAnalytics(request, env) {

@@ -39,7 +39,8 @@
     const key = `${state.accountId}:${heroId || 0}:${metric}:${badge || 0}`;
     if (!positions.has(key)) {
       positions.set(key, fetch(`/api/ladder/position?account=${state.accountId}&metric=${metric}${heroId ? `&hero=${heroId}` : ""}${badge ? `&badge=${badge}` : ""}`)
-        .then((r) => (r.ok ? r.json() : null)).catch(() => null));
+        .then((r) => (r.ok ? r.json() : r.status === 429 ? { limited: true } : null)).catch(() => null)
+        .then((res) => { if (!res || res.limited) positions.delete(key); return res; })); // let a retry happen later
     }
     return positions.get(key);
   }
@@ -128,6 +129,7 @@
       if (!card.isConnected) return;
       const pos = card.querySelector(".pc-pos"), sub = card.querySelector(".pc-sub"), bar = card.querySelector(".pc-bar > span");
       if (!res) { pos.textContent = "–"; sub.textContent = "unavailable right now"; return; }
+      if (res.limited) { pos.textContent = "–"; sub.textContent = "busy: refresh in a minute"; return; }
       if (!res.qualified) { pos.textContent = "–"; pos.classList.add("dim"); sub.textContent = `needs ${res.min}+ games`; return; }
       const topPct = res.top * 100;
       pos.textContent = `#${fmt(res.position)}`;
@@ -154,7 +156,7 @@
       set("official", mine ? `#${fmt(mine.rank)} <em>of ${fmt(b.total)}</em>` : `<span class="dim">not in top ${fmt(b.total)}</span>`);
     }).catch(() => set("official", "–"));
     for (const k of ["matches", "winrate"]) {
-      loadPosition(heroId, k).then((r) => set(k, !r ? "–" : !r.qualified ? `<span class="dim">needs ${r.min}+ games</span>`
+      loadPosition(heroId, k).then((r) => set(k, !r || r.limited ? "–" : !r.qualified ? `<span class="dim">needs ${r.min}+ games</span>`
         : `#${fmt(r.position)} <em>top ${topLabel(r.top)}</em>`));
     }
   };
